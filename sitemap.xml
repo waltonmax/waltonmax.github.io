@@ -2,63 +2,63 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://yoursite.com/2020/08/11/hello-world-2/</loc>
+    <loc>https://waltonmax.github.io/2020/08/11/hello-world-2/</loc>
     
     <lastmod>2020-08-11</lastmod>
     
   </url>
   
   <url>
-    <loc>http://yoursite.com/2020/08/11/hello-world/</loc>
+    <loc>https://waltonmax.github.io/2020/08/11/hello-world/</loc>
     
     <lastmod>2020-08-11</lastmod>
     
   </url>
   
   <url>
-    <loc>http://yoursite.com/tags/index.html</loc>
+    <loc>https://waltonmax.github.io/repository/index.html</loc>
     
     <lastmod>2020-08-11</lastmod>
     
   </url>
   
   <url>
-    <loc>http://yoursite.com/repository/index.html</loc>
+    <loc>https://waltonmax.github.io/tags/index.html</loc>
     
     <lastmod>2020-08-11</lastmod>
     
   </url>
   
   <url>
-    <loc>http://yoursite.com/about/index.html</loc>
+    <loc>https://waltonmax.github.io/about/index.html</loc>
     
     <lastmod>2020-08-11</lastmod>
     
   </url>
   
   <url>
-    <loc>http://yoursite.com/books/index.html</loc>
+    <loc>https://waltonmax.github.io/books/index.html</loc>
     
     <lastmod>2020-08-11</lastmod>
     
   </url>
   
   <url>
-    <loc>http://yoursite.com/links/index.html</loc>
+    <loc>https://waltonmax.github.io/categories/index.html</loc>
     
     <lastmod>2020-08-11</lastmod>
     
   </url>
   
   <url>
-    <loc>http://yoursite.com/categories/index.html</loc>
+    <loc>https://waltonmax.github.io/links/index.html</loc>
     
     <lastmod>2020-08-11</lastmod>
     
   </url>
   
   <url>
-    <loc>http://yoursite.com/404.html</loc>
+    <loc>https://waltonmax.github.io/404.html</loc>
     
     <lastmod>2020-08-11</lastmod>
     
@@ -66,7 +66,7 @@
   
 
   <url>
-    <loc>http://yoursite.com/</loc>
+    <loc>https://waltonmax.github.io/</loc>
     <lastmod>2020-08-11</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
@@ -74,7 +74,7 @@
 
   
   <url>
-    <loc>http://yoursite.com/tags/test-tag/</loc>
+    <loc>https://waltonmax.github.io/tags/test-tag/</loc>
     <lastmod>2020-08-11</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -83,7 +83,7 @@
 
   
   <url>
-    <loc>http://yoursite.com/categories/test/</loc>
+    <loc>https://waltonmax.github.io/categories/test/</loc>
     <lastmod>2020-08-11</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
