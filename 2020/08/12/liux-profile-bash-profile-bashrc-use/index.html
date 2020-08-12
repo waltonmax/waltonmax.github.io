@@ -17,18 +17,21 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>友情链接 | walton blog</title>
-  <meta property="og:type" content="website">
-<meta property="og:title" content="友情链接">
-<meta property="og:url" content="https://waltonmax.github.io/links/index.html">
+  <title>liux中profile、bash_profile、bashrc作用与区别 | walton blog</title>
+  <meta name="description" content="profile 文件    profile文件的作用 profile（&#x2F;etc&#x2F;profile），用于设置系统级的环境变量和启动程序，在这个文件下配置会对所有用户生效。当用户登录（login）时，文件会被执行，并从&#x2F;etc&#x2F;profile.d目录的配置文件中查找shell设置。    在profile中添加环境变量 一般不建议在&#x2F;etc&#x2F;profile文件中添加环境变量，因为在这个文件中添加的设">
+<meta property="og:type" content="article">
+<meta property="og:title" content="liux中profile、bash_profile、bashrc作用与区别">
+<meta property="og:url" content="https://waltonmax.github.io/2020/08/12/liux-profile-bash-profile-bashrc-use/index.html">
 <meta property="og:site_name" content="Walton">
+<meta property="og:description" content="profile 文件    profile文件的作用 profile（&#x2F;etc&#x2F;profile），用于设置系统级的环境变量和启动程序，在这个文件下配置会对所有用户生效。当用户登录（login）时，文件会被执行，并从&#x2F;etc&#x2F;profile.d目录的配置文件中查找shell设置。    在profile中添加环境变量 一般不建议在&#x2F;etc&#x2F;profile文件中添加环境变量，因为在这个文件中添加的设">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-08-11T02:49:10.962Z">
-<meta property="article:modified_time" content="2020-08-11T02:49:10.962Z">
+<meta property="article:published_time" content="2020-08-12T12:31:41.000Z">
+<meta property="article:modified_time" content="2020-08-12T13:20:36.782Z">
 <meta property="article:author" content="Walton">
+<meta property="article:tag" content="liux">
 <meta name="twitter:card" content="summary">
   <!-- Canonical links -->
-  <link rel="canonical" href="https://waltonmax.github.io/links/index.html">
+  <link rel="canonical" href="https://waltonmax.github.io/2020/08/12/liux-profile-bash-profile-bashrc-use/index.html">
   
     <link rel="alternate" href="/atom.xml" title="Walton" type="application/atom+xml">
   
@@ -45,7 +48,7 @@
 <meta name="generator" content="Hexo 5.0.2"></head>
 
 
-<body class="main-center no-sidebar" itemscope itemtype="http://schema.org/WebPage">
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
   <header class="header" itemscope itemtype="http://schema.org/WPHeader">
   <div class="slimContent">
     <div class="navbar-header">
@@ -271,67 +274,162 @@
 </aside>
 
   
-  <main class="main" role="main">
-  <article class="article article-links article-type-list" itemscope="">
-  <header class="article-header">
-    <h1 itemprop="title">友情链接</h1>
-    <p class="text-muted">
-      欢迎交换链接，可在当前页面留言
-    </p>
-  </header>
-  <div class="article-body">
-    <div class="row">
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#profile-%E6%96%87%E4%BB%B6"><span class="toc-number">1.</span> <span class="toc-text"> profile 文件</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#profile%E6%96%87%E4%BB%B6%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="toc-number">1.1.</span> <span class="toc-text"> profile文件的作用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9C%A8profile%E4%B8%AD%E6%B7%BB%E5%8A%A0%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-number">1.2.</span> <span class="toc-text"> 在profile中添加环境变量</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#bashrc%E6%96%87%E4%BB%B6"><span class="toc-number">2.</span> <span class="toc-text"> bashrc文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#bash_profile%E6%96%87%E4%BB%B6"><span class="toc-number">3.</span> <span class="toc-text"> bash_profile文件</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-liux-profile-bash-profile-bashrc-use" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
       
         
-          <div class="col-sm-6 col-md-4">
-            <div class="panel panel-default hover-shadow hover-grow">
-              <figure class="media media-middle">
-                <div class="media-left pr-no">
-                  <a href="https://www.google.com/" target="_blank" class="img-burn thumb-md media-middle">
-                    <img src="/images/favatar/chuangzaoshi-logo.png" class="w-full" alt="">
-                  </a>
-                </div>
-                <div class="media-body p-0x">
-                  <h4 class="media-heading"><a href="https://www.google.com/" target="_blank"><span class="text-dark">创造狮</span></a></h4>
-                  <div class="text-muted">
-                    Google
-                  </div>
-                </div>
-              </figure>
-            </div>
-          </div>
-          
+  
+    <h1 class="article-title" itemprop="name">
+      liux中profile、bash_profile、bashrc作用与区别
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/08/12/liux-profile-bash-profile-bashrc-use/" class="article-date">
+	  <time datetime="2020-08-12T12:31:41.000Z" itemprop="datePublished">2020-08-12</time>
+	</a>
+</span>
         
-          <div class="col-sm-6 col-md-4">
-            <div class="panel panel-default hover-shadow hover-grow">
-              <figure class="media media-middle">
-                <div class="media-left pr-no">
-                  <a href="http://idesign.qq.com/" target="_blank" class="img-burn thumb-md media-middle">
-                    <img src="/images/favatar/idesign-logo.png" class="w-full" alt="">
-                  </a>
-                </div>
-                <div class="media-body p-0x">
-                  <h4 class="media-heading"><a href="http://idesign.qq.com/" target="_blank"><span class="text-dark">腾讯设计导航</span></a></h4>
-                  <div class="text-muted">
-                    网罗全网高逼格的设计站点
-                  </div>
-                </div>
-              </figure>
-            </div>
-          </div>
-          
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/liux/">liux</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/liux/" rel="tag">liux</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/08/12/liux-profile-bash-profile-bashrc-use/#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
     </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h3 id="profile-文件"><a class="markdownIt-Anchor" href="#profile-文件"></a> profile 文件</h3>
+<ol>
+<li>
+<h4 id="profile文件的作用"><a class="markdownIt-Anchor" href="#profile文件的作用"></a> <code>profile</code>文件的作用</h4>
+<p><code>profile</code>（<code>/etc/profile</code>），用于设置系统级的环境变量和启动程序，在这个文件下配置会对<strong>所有用户</strong>生效。当用户登录（<code>login</code>）时，文件会被执行，并从<code>/etc/profile.d</code>目录的配置文件中查找<code>shell</code>设置。</p>
+</li>
+<li>
+<h4 id="在profile中添加环境变量"><a class="markdownIt-Anchor" href="#在profile中添加环境变量"></a> 在<code>profile</code>中添加环境变量</h4>
+<p>一般不建议在<code>/etc/profile</code>文件中添加环境变量，因为在这个文件中添加的设置会对所有用户起作用。当需要添加时，我们可以按以方式添加：</p>
+<p>如，添加一个<code>HOST</code>值为<code>itbilu.com</code>的环境变量：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export HOST&#x3D;itbilu.com</span><br></pre></td></tr></table></figure>
+<p>添加时，可以在行尾使用<code>;</code>号，也可以不使用。一个变量名可以对应多个变量值，多个变量值使用<code>:</code>分隔。</p>
+<p>添加环境变量后，需要重新登录才能生效，也可以使用<code>source</code>命令强制立即生效：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">source &#x2F;etc&#x2F;profile</span><br></pre></td></tr></table></figure>
+<p>查看是否生效可以使用<code>echo</code>命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ echo $HOST</span><br><span class="line">itbilu.com</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="bashrc文件"><a class="markdownIt-Anchor" href="#bashrc文件"></a> <code>bashrc</code>文件</h3>
+<p>这个文件用于配置函数或别名。<code>bashrc</code>文件有两种级别：系统级的位于<code>/etc/bashrc</code>、用户级的<code>~/.bashrc</code>，两者分别会对所有用户和当前用户生效。</p>
+<p><code>bashrc</code>文件只会对指定的<code>shell</code>类型起作用，<code>bashrc</code>只会被<code>bash shell</code>调用。</p>
+<h3 id="bash_profile文件"><a class="markdownIt-Anchor" href="#bash_profile文件"></a> <code>bash_profile</code>文件</h3>
+<p><code>bash_profile</code>只有单一用户有效，文件存储位于<code>~/.bash_profile</code>，该文件是一个用户级的设置，可以理解为某一个用户的<code>profile</code>目录下。这个文件同样也可以用于配置环境变量和启动程序，但只针对单个用户有效。</p>
+<p>和<code>profile</code>文件类似，<code>bash_profile</code>也会在用户登录（<code>login</code>）时生效，也可以用于设置环境变理。但与<code>profile</code>不同，<code>bash_profile</code>只会对当前用户生效。</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://waltonmax.github.io/2020/08/12/liux-profile-bash-profile-bashrc-use/" title="liux中profile、bash_profile、bashrc作用与区别" target="_blank" rel="external">https://waltonmax.github.io/2020/08/12/liux-profile-bash-profile-bashrc-use/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/waltonmax" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/waltonmax" target="_blank"><span class="text-dark">Walton</span><small class="ml-1x">software engineer</small></a></h3>
+        <div>个人简介。</div>
+      </div>
+    </figure>
   </div>
-</article>
+</div>
+
+
+    </div>
+  </article>
+  
+    
 
   
-  <section id="comments">
-  	
-      <div id="vcomments"></div>
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
     
-  </section>
-
-
+    <li class="prev">
+      <a href="/2020/08/12/git-use/" title="git 使用"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/08/12/hexo-deployment/" title="hexo 部署"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+        <span>[&nbsp;</span><span>文章目录</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
 
 
 </main>
@@ -389,32 +487,9 @@ window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
 
 
 
-
    
-    
-  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/valine"></script>
-  <script type="text/javascript">
-  var GUEST = ['nick', 'mail', 'link'];
-  var meta = 'nick,mail,link';
-  meta = meta.split(',').filter(function(item) {
-    return GUEST.indexOf(item) > -1;
-  });
-  new Valine({
-    el: '#vcomments',
-    verify: false,
-    notify: false,
-    appId: '',
-    appKey: '',
-    placeholder: 'Just go go',
-    avatar: 'mm',
-    meta: meta,
-    pageSize: '10' || 10,
-    visitor: false
-  });
-  </script>
 
-     
+
 
 
 

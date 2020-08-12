@@ -6,7 +6,7 @@
   <link href="https://waltonmax.github.io/atom.xml" rel="self"/>
   
   <link href="https://waltonmax.github.io/"/>
-  <updated>2020-08-12T09:56:22.722Z</updated>
+  <updated>2020-08-12T12:55:52.491Z</updated>
   <id>https://waltonmax.github.io/</id>
   
   <author>
@@ -17,21 +17,75 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>git 使用</title>
+    <link href="https://waltonmax.github.io/2020/08/12/git-use/"/>
+    <id>https://waltonmax.github.io/2020/08/12/git-use/</id>
+    <published>2020-08-12T12:31:41.000Z</published>
+    <updated>2020-08-12T12:55:52.491Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;h4 id=&quot;命令&quot;&gt;&lt;a class=&quot;markdownIt-Anchor&quot; href=&quot;#命令&quot;&gt;&lt;/a&gt; 命令:&lt;/h4&gt;
+&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span cl</summary>
+      
+    
+    
+    
+    <category term="开发工具使用" scheme="https://waltonmax.github.io/categories/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/"/>
+    
+    
+    <category term="git" scheme="https://waltonmax.github.io/tags/git/"/>
+    
+    <category term="bash" scheme="https://waltonmax.github.io/tags/bash/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>liux中profile、bash_profile、bashrc作用与区别</title>
+    <link href="https://waltonmax.github.io/2020/08/12/liux-profile-bash-profile-bashrc-use/"/>
+    <id>https://waltonmax.github.io/2020/08/12/liux-profile-bash-profile-bashrc-use/</id>
+    <published>2020-08-12T12:31:41.000Z</published>
+    <updated>2020-08-12T13:20:36.782Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;h3 id=&quot;profile-文件&quot;&gt;&lt;a class=&quot;markdownIt-Anchor&quot; href=&quot;#profile-文件&quot;&gt;&lt;/a&gt; profile 文件&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;h4 id=&quot;profile文件的作用&quot;&gt;&lt;a class=&quot;markdownI</summary>
+      
+    
+    
+    
+    <category term="liux" scheme="https://waltonmax.github.io/categories/liux/"/>
+    
+    
+    <category term="liux" scheme="https://waltonmax.github.io/tags/liux/"/>
+    
+  </entry>
+  
+  <entry>
     <title>hexo 部署</title>
     <link href="https://waltonmax.github.io/2020/08/12/hexo-deployment/"/>
     <id>https://waltonmax.github.io/2020/08/12/hexo-deployment/</id>
     <published>2020-08-12T09:33:20.000Z</published>
-    <updated>2020-08-12T09:56:22.722Z</updated>
+    <updated>2020-08-12T13:04:31.189Z</updated>
     
     
       
       
-    <summary type="html">&lt;h4 id=&quot;安装&quot;&gt;&lt;a class=&quot;markdownIt-Anchor&quot; href=&quot;#安装&quot;&gt;&lt;/a&gt; 安装&lt;/h4&gt;
+    <summary type="html">&lt;h5 id=&quot;部署&quot;&gt;&lt;a class=&quot;markdownIt-Anchor&quot; href=&quot;#部署&quot;&gt;&lt;/a&gt; 部署&lt;/h5&gt;
 &lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span cla</summary>
       
     
     
     
+    <category term="前端" scheme="https://waltonmax.github.io/categories/%E5%89%8D%E7%AB%AF/"/>
+    
+    
+    <category term="hexo" scheme="https://waltonmax.github.io/tags/hexo/"/>
     
   </entry>
   
@@ -40,12 +94,13 @@
     <link href="https://waltonmax.github.io/2020/08/11/hello-world/"/>
     <id>https://waltonmax.github.io/2020/08/11/hello-world/</id>
     <published>2020-08-11T02:36:32.212Z</published>
-    <updated>2020-08-11T10:22:47.432Z</updated>
+    <updated>2020-08-12T13:08:03.420Z</updated>
     
     
       
       
-    <summary type="html">&lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot;&gt;Hexo&lt;/a&gt;! This is your very first post. Check &lt;a href=&quot;https://hexo.io/docs/&quot;&gt;documentation&lt;/a&gt; for</summary>
+    <summary type="html">&lt;h2 id=&quot;quick-start&quot;&gt;&lt;a class=&quot;markdownIt-Anchor&quot; href=&quot;#quick-start&quot;&gt;&lt;/a&gt; Quick Start&lt;/h2&gt;
+&lt;h3 id=&quot;create-a-new-post&quot;&gt;&lt;a class=&quot;markdownIt-</summary>
       
     
     
