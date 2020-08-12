@@ -6,7 +6,7 @@
   <link href="https://waltonmax.github.io/atom.xml" rel="self"/>
   
   <link href="https://waltonmax.github.io/"/>
-  <updated>2020-08-11T10:22:50.120Z</updated>
+  <updated>2020-08-12T09:50:52.402Z</updated>
   <id>https://waltonmax.github.io/</id>
   
   <author>
@@ -17,24 +17,21 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>Hello World</title>
-    <link href="https://waltonmax.github.io/2020/08/11/hello-world-2/"/>
-    <id>https://waltonmax.github.io/2020/08/11/hello-world-2/</id>
-    <published>2020-08-11T03:03:33.746Z</published>
-    <updated>2020-08-11T10:22:50.120Z</updated>
+    <title>hexo 部署</title>
+    <link href="https://waltonmax.github.io/2020/08/12/hexo-deployment/"/>
+    <id>https://waltonmax.github.io/2020/08/12/hexo-deployment/</id>
+    <published>2020-08-12T09:33:20.000Z</published>
+    <updated>2020-08-12T09:50:52.402Z</updated>
     
     
       
       
-    <summary type="html">&lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot;&gt;Hexo&lt;/a&gt;! This is your very first post. Check &lt;a href=&quot;https://hexo.io/docs/&quot;&gt;documentation&lt;/a&gt; for</summary>
+    <summary type="html">&lt;h3 id=&quot;安装&quot;&gt;&lt;a class=&quot;markdownIt-Anchor&quot; href=&quot;#安装&quot;&gt;&lt;/a&gt; 安装&lt;/h3&gt;
+&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span cla</summary>
       
     
     
     
-    <category term="test" scheme="https://waltonmax.github.io/categories/test/"/>
-    
-    
-    <category term="test-tag" scheme="https://waltonmax.github.io/tags/test-tag/"/>
     
   </entry>
   
