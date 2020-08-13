@@ -6,7 +6,7 @@
   <link href="https://waltonmax.github.io/atom.xml" rel="self"/>
   
   <link href="https://waltonmax.github.io/"/>
-  <updated>2020-08-12T12:55:52.491Z</updated>
+  <updated>2020-08-13T09:46:06.480Z</updated>
   <id>https://waltonmax.github.io/</id>
   
   <author>
@@ -17,11 +17,127 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>mongodb备份与恢复</title>
+    <link href="https://waltonmax.github.io/2020/08/12/database-mongodb-backup/"/>
+    <id>https://waltonmax.github.io/2020/08/12/database-mongodb-backup/</id>
+    <published>2020-08-12T12:31:41.000Z</published>
+    <updated>2020-08-13T09:46:06.480Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;h3 id=&quot;mongodump备份恢复&quot;&gt;&lt;a class=&quot;markdownIt-Anchor&quot; href=&quot;#mongodump备份恢复&quot;&gt;&lt;/a&gt; mongodump备份/恢复&lt;/h3&gt;
+&lt;figure class=&quot;highlight shell&quot;&gt;&lt;table&gt;&lt;t</summary>
+      
+    
+    
+    
+    <category term="数据库" scheme="https://waltonmax.github.io/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+    
+    <category term="mongodb" scheme="https://waltonmax.github.io/tags/mongodb/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>mysql备份与恢复</title>
+    <link href="https://waltonmax.github.io/2020/08/12/database-mysql-backup/"/>
+    <id>https://waltonmax.github.io/2020/08/12/database-mysql-backup/</id>
+    <published>2020-08-12T12:31:41.000Z</published>
+    <updated>2020-08-13T09:47:19.072Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class</summary>
+      
+    
+    
+    
+    <category term="数据库" scheme="https://waltonmax.github.io/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+    
+    <category term="mysql" scheme="https://waltonmax.github.io/tags/mysql/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>mysql重置密码</title>
+    <link href="https://waltonmax.github.io/2020/08/12/database-mysql-reset-password/"/>
+    <id>https://waltonmax.github.io/2020/08/12/database-mysql-reset-password/</id>
+    <published>2020-08-12T12:31:41.000Z</published>
+    <updated>2020-08-13T09:47:37.451Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class</summary>
+      
+    
+    
+    
+    <category term="数据库" scheme="https://waltonmax.github.io/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+    
+    <category term="mysql" scheme="https://waltonmax.github.io/tags/mysql/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Git 工作流与规范</title>
+    <link href="https://waltonmax.github.io/2020/08/12/git-flow-guide/"/>
+    <id>https://waltonmax.github.io/2020/08/12/git-flow-guide/</id>
+    <published>2020-08-12T12:31:41.000Z</published>
+    <updated>2020-08-13T10:04:41.288Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;h2 id=&quot;分支约定&quot;&gt;&lt;a class=&quot;markdownIt-Anchor&quot; href=&quot;#分支约定&quot;&gt;&lt;/a&gt; 分支约定&lt;/h2&gt;
+&lt;p&gt;Git Flow有主分支和辅助分支两类分支。其中主分支用于组织与软件开发、部署相关的活动；辅助分支组织为了解决特定的问题而进行的各种</summary>
+      
+    
+    
+    
+    <category term="开发规范" scheme="https://waltonmax.github.io/categories/%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83/"/>
+    
+    
+    <category term="git" scheme="https://waltonmax.github.io/tags/git/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>GitHub语义化版本 2.0.0</title>
+    <link href="https://waltonmax.github.io/2020/08/12/git-semantic-versioning/"/>
+    <id>https://waltonmax.github.io/2020/08/12/git-semantic-versioning/</id>
+    <published>2020-08-12T12:31:41.000Z</published>
+    <updated>2020-08-13T10:08:42.246Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;h2 id=&quot;摘要&quot;&gt;&lt;a class=&quot;markdownIt-Anchor&quot; href=&quot;#摘要&quot;&gt;&lt;/a&gt; 摘要&lt;/h2&gt;
+&lt;p&gt;版本格式：主版本号.次版本号.修订号，版本号递增规则如下：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;主版本号：当你做了不兼容的 API 修改，&lt;/li&gt;
+&lt;l</summary>
+      
+    
+    
+    
+    <category term="开发规范" scheme="https://waltonmax.github.io/categories/%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83/"/>
+    
+    
+    <category term="版本" scheme="https://waltonmax.github.io/tags/%E7%89%88%E6%9C%AC/"/>
+    
+  </entry>
+  
+  <entry>
     <title>git 使用</title>
     <link href="https://waltonmax.github.io/2020/08/12/git-use/"/>
     <id>https://waltonmax.github.io/2020/08/12/git-use/</id>
     <published>2020-08-12T12:31:41.000Z</published>
-    <updated>2020-08-12T12:55:52.491Z</updated>
+    <updated>2020-08-13T09:53:42.789Z</updated>
     
     
       
