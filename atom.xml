@@ -42,19 +42,18 @@
   </entry>
   
   <entry>
-    <title>liux中profile、bash_profile、bashrc作用与区别</title>
+    <title>liux中profile、bashrc、bash_profile作用与区别</title>
     <link href="https://waltonmax.github.io/2020/08/12/liux-profile-bash-profile-bashrc-use/"/>
     <id>https://waltonmax.github.io/2020/08/12/liux-profile-bash-profile-bashrc-use/</id>
     <published>2020-08-12T12:31:41.000Z</published>
-    <updated>2020-08-12T13:20:36.782Z</updated>
+    <updated>2020-08-13T09:22:52.589Z</updated>
     
     
       
       
-    <summary type="html">&lt;h3 id=&quot;profile-文件&quot;&gt;&lt;a class=&quot;markdownIt-Anchor&quot; href=&quot;#profile-文件&quot;&gt;&lt;/a&gt; profile 文件&lt;/h3&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;h4 id=&quot;profile文件的作用&quot;&gt;&lt;a class=&quot;markdownI</summary>
+    <summary type="html">&lt;p&gt;&lt;code&gt;/etc/profile&lt;/code&gt;，&lt;code&gt;/etc/bashrc&lt;/code&gt; 是系统全局环境变量设定&lt;br /&gt;
+&lt;code&gt;~/.profile&lt;/code&gt;，&lt;code&gt;~/.bashrc&lt;/code&gt;用户家目录下的私有环境变量设定&lt;/p&gt;
+&lt;p</summary>
       
     
     
