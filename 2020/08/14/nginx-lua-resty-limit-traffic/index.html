@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>nginx-Lua限流模块lua-resty-limit-traffic使用 | walton blog</title>
+  <meta name="description" content="限制接口总并发数 按照 ip 限制其并发连接数 12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970717273lua_shared_dict my_limit_conn_store 10">
+<meta property="og:type" content="article">
+<meta property="og:title" content="nginx-Lua限流模块lua-resty-limit-traffic使用">
+<meta property="og:url" content="https://waltonmax.github.io/2020/08/14/nginx-lua-resty-limit-traffic/index.html">
+<meta property="og:site_name" content="Walton">
+<meta property="og:description" content="限制接口总并发数 按照 ip 限制其并发连接数 12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970717273lua_shared_dict my_limit_conn_store 10">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-08-14T13:14:24.000Z">
+<meta property="article:modified_time" content="2020-08-14T13:16:41.368Z">
+<meta property="article:author" content="Walton">
+<meta property="article:tag" content="nginx">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://waltonmax.github.io/2020/08/14/nginx-lua-resty-limit-traffic/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Walton" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.0.2"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/waltonmax" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Walton</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">software engineer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> BeiJing, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/waltonmax" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/liux/">liux</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/nginx/">nginx</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/test/">test</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%89%8D%E7%AB%AF/">前端</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/">开发工具使用</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83/">开发规范</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><span class="category-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/bash/" style="font-size: 13px;">bash</a> <a href="/tags/git/" style="font-size: 13.5px;">git</a> <a href="/tags/hexo/" style="font-size: 13px;">hexo</a> <a href="/tags/iptables/" style="font-size: 13px;">iptables</a> <a href="/tags/liux/" style="font-size: 14px;">liux</a> <a href="/tags/lua/" style="font-size: 13px;">lua</a> <a href="/tags/mongodb/" style="font-size: 13px;">mongodb</a> <a href="/tags/mysql/" style="font-size: 13.5px;">mysql</a> <a href="/tags/nginx/" style="font-size: 13.5px;">nginx</a> <a href="/tags/openresty/" style="font-size: 13px;">openresty</a> <a href="/tags/test-tag/" style="font-size: 13px;">test-tag</a> <a href="/tags/%E7%89%88%E6%9C%AC/" style="font-size: 13px;">版本</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/nginx/">nginx</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/08/14/nginx-lua-resty-limit-traffic/" class="title">nginx-Lua限流模块lua-resty-limit-traffic使用</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-08-14T13:14:24.000Z" itemprop="datePublished">2020-08-14</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/08/12/database-mongodb-backup/" class="title">mongodb备份与恢复</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-08-12T12:31:41.000Z" itemprop="datePublished">2020-08-12</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/08/12/database-mysql-backup/" class="title">mysql备份与恢复</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-08-12T12:31:41.000Z" itemprop="datePublished">2020-08-12</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/08/12/database-mysql-reset-password/" class="title">mysql重置密码</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-08-12T12:31:41.000Z" itemprop="datePublished">2020-08-12</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83/">开发规范</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/08/12/git-flow-guide/" class="title">Git 工作流与规范</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-08-12T12:31:41.000Z" itemprop="datePublished">2020-08-12</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E9%99%90%E5%88%B6%E6%8E%A5%E5%8F%A3%E6%80%BB%E5%B9%B6%E5%8F%91%E6%95%B0"><span class="toc-number">1.</span> <span class="toc-text"> 限制接口总并发数</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E9%99%90%E5%88%B6%E6%8E%A5%E5%8F%A3%E6%97%B6%E9%97%B4%E7%AA%97%E8%AF%B7%E6%B1%82%E6%95%B0"><span class="toc-number">2.</span> <span class="toc-text"> 限制接口时间窗请求数</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E5%B9%B3%E6%BB%91%E9%99%90%E5%88%B6%E6%8E%A5%E5%8F%A3%E8%AF%B7%E6%B1%82%E6%95%B0"><span class="toc-number">3.</span> <span class="toc-text"> 平滑限制接口请求数</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E6%BC%8F%E6%A1%B6%E7%AE%97%E6%B3%95%E9%99%90%E6%B5%81"><span class="toc-number">4.</span> <span class="toc-text"> 漏桶算法限流</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E4%BB%A4%E7%89%8C%E6%A1%B6%E7%AE%97%E6%B3%95%E9%99%90%E6%B5%81"><span class="toc-number">5.</span> <span class="toc-text"> 令牌桶算法限流</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-nginx-lua-resty-limit-traffic" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      nginx-Lua限流模块lua-resty-limit-traffic使用
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/08/14/nginx-lua-resty-limit-traffic/" class="article-date">
+	  <time datetime="2020-08-14T13:14:24.000Z" itemprop="datePublished">2020-08-14</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/nginx/">nginx</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/nginx/" rel="tag">nginx</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/08/14/nginx-lua-resty-limit-traffic/#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h6 id="限制接口总并发数"><a class="markdownIt-Anchor" href="#限制接口总并发数"></a> 限制接口总并发数</h6>
+<p>按照 ip 限制其并发连接数</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line">lua_shared_dict my_limit_conn_store <span class="number">100</span>m;</span><br><span class="line">...</span><br><span class="line">location /hello &#123;</span><br><span class="line">    access_by_lua_block &#123;</span><br><span class="line">        local limit_conn = <span class="built_in">require</span> <span class="string">&quot;resty.limit.conn&quot;</span></span><br><span class="line">        -- 限制一个 ip 客户端最大 <span class="number">1</span> 个并发请求</span><br><span class="line">        -- burst 设置为 <span class="number">0</span>，如果超过最大的并发请求数，则直接返回<span class="number">503</span>，</span><br><span class="line">        -- 如果此处要允许突增的并发数，可以修改 burst 的值（漏桶的桶容量）</span><br><span class="line">        -- 最后一个参数其实是你要预估这些并发（或者说单个请求）要处理多久，以便于对桶里面的请求应用漏桶算法</span><br><span class="line">        </span><br><span class="line">        local lim, err = limit_conn.new(<span class="string">&quot;my_limit_conn_store&quot;</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0.5</span>)              </span><br><span class="line">        <span class="keyword">if</span> not lim then</span><br><span class="line">            ngx.log(ngx.ERR, <span class="string">&quot;failed to instantiate a resty.limit.conn object: &quot;</span>, err)</span><br><span class="line">            <span class="keyword">return</span> ngx.exit(<span class="number">500</span>)</span><br><span class="line">        end</span><br><span class="line"></span><br><span class="line">        local key = ngx.var.binary_remote_addr</span><br><span class="line">        -- commit 为<span class="literal">true</span> 代表要更新shared dict中key的值，</span><br><span class="line">        -- <span class="literal">false</span> 代表只是查看当前请求要处理的延时情况和前面还未被处理的请求数</span><br><span class="line">        local delay, err = lim:incoming(key, <span class="literal">true</span>)</span><br><span class="line">        <span class="keyword">if</span> not delay then</span><br><span class="line">            <span class="keyword">if</span> err == <span class="string">&quot;rejected&quot;</span> then</span><br><span class="line">                <span class="keyword">return</span> ngx.exit(<span class="number">503</span>)</span><br><span class="line">            end</span><br><span class="line">            ngx.log(ngx.ERR, <span class="string">&quot;failed to limit req: &quot;</span>, err)</span><br><span class="line">            <span class="keyword">return</span> ngx.exit(<span class="number">500</span>)</span><br><span class="line">        end</span><br><span class="line"></span><br><span class="line">        -- 如果请求连接计数等信息被加到shared dict中，则在ctx中记录下，</span><br><span class="line">        -- 因为后面要告知连接断开，以处理其他连接</span><br><span class="line">        <span class="keyword">if</span> lim:is_committed() then</span><br><span class="line">            local ctx = ngx.ctx</span><br><span class="line">            ctx.limit_conn = lim</span><br><span class="line">            ctx.limit_conn_key = key</span><br><span class="line">            ctx.limit_conn_delay = delay</span><br><span class="line">        end</span><br><span class="line"></span><br><span class="line">        local conn = err</span><br><span class="line">        -- 其实这里的 delay 肯定是上面说的并发处理时间的整数倍，</span><br><span class="line">        -- 举个例子，每秒处理<span class="number">100</span>并发，桶容量<span class="number">200</span>个，当时同时来<span class="number">500</span>个并发，则<span class="number">200</span>个拒掉</span><br><span class="line">        -- <span class="number">100</span>个在被处理，然后<span class="number">200</span>个进入桶中暂存，被暂存的这<span class="number">200</span>个连接中，<span class="number">0</span><span class="number">-100</span>个连接其实应该延后<span class="number">0.5</span>秒处理，</span><br><span class="line">        -- <span class="number">101</span><span class="number">-200</span>个则应该延后<span class="number">0.5</span>*<span class="number">2</span>=<span class="number">1</span>秒处理（<span class="number">0.5</span>是上面预估的并发处理时间）</span><br><span class="line">        <span class="keyword">if</span> delay &gt;= <span class="number">0.001</span> then</span><br><span class="line">            ngx.sleep(delay)</span><br><span class="line">        end</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    log_by_lua_block &#123;</span><br><span class="line">        local ctx = ngx.ctx</span><br><span class="line">        local lim = ctx.limit_conn</span><br><span class="line">        <span class="keyword">if</span> lim then</span><br><span class="line">            local key = ctx.limit_conn_key</span><br><span class="line">            -- 这个连接处理完后应该告知一下，更新shared dict中的值，让后续连接可以接入进来处理</span><br><span class="line">            -- 此处可以动态更新你之前的预估时间，但是别忘了把limit_conn.new这个方法抽出去写，</span><br><span class="line">            -- 要不每次请求进来又会重置</span><br><span class="line">            local conn, err = lim:leaving(key, <span class="number">0.5</span>)</span><br><span class="line">            <span class="keyword">if</span> not conn then</span><br><span class="line">                ngx.log(ngx.ERR,</span><br><span class="line">                        <span class="string">&quot;failed to record the connection leaving &quot;</span>,</span><br><span class="line">                        <span class="string">&quot;request: &quot;</span>, err)</span><br><span class="line">                <span class="keyword">return</span></span><br><span class="line">            end</span><br><span class="line">        end</span><br><span class="line">    &#125;</span><br><span class="line">    proxy_pass http:<span class="comment">//10.100.157.198:6112;</span></span><br><span class="line">    proxy_set_header Host $host;</span><br><span class="line">    proxy_redirect off;</span><br><span class="line">    proxy_set_header X-Real-IP $remote_addr;</span><br><span class="line">    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">    proxy_connect_timeout <span class="number">60</span>;</span><br><span class="line">    proxy_read_timeout <span class="number">600</span>;</span><br><span class="line">    proxy_send_timeout <span class="number">600</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>说明：</p>
+<p>其实此处没有设置 <code>burst</code> 的值，就是单纯的限制最大并发数，如果设置了 <code>burst</code> 的值，并且做了延时处理，其实就是对并发数使用了漏桶算法，但是如果不做延时处理，其实就是使用的令牌桶算法。参考下面对请求数使用漏桶令牌桶的部分，并发数的漏桶令牌桶实现与之相似</p>
+<h6 id="限制接口时间窗请求数"><a class="markdownIt-Anchor" href="#限制接口时间窗请求数"></a> 限制接口时间窗请求数</h6>
+<p>场景：</p>
+<p>限制 <code>ip</code> 每分钟只能调用 120 次 <code>/hello</code> 接口（允许在时间段开始的时候一次性放过120个请求）</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">lua_shared_dict my_limit_count_store <span class="number">100</span>m;</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">init_by_lua_block &#123;</span><br><span class="line">    <span class="built_in">require</span> <span class="string">&quot;resty.core&quot;</span></span><br><span class="line">&#125;</span><br><span class="line">....</span><br><span class="line"></span><br><span class="line">location /hello &#123;</span><br><span class="line">    access_by_lua_block &#123;</span><br><span class="line">        local limit_count = <span class="built_in">require</span> <span class="string">&quot;resty.limit.count&quot;</span></span><br><span class="line"></span><br><span class="line">        -- rate: <span class="number">10</span>/min </span><br><span class="line">        local lim, err = limit_count.new(<span class="string">&quot;my_limit_count_store&quot;</span>, <span class="number">120</span>, <span class="number">60</span>)</span><br><span class="line">        <span class="keyword">if</span> not lim then</span><br><span class="line">            ngx.log(ngx.ERR, <span class="string">&quot;failed to instantiate a resty.limit.count object: &quot;</span>, err)</span><br><span class="line">            <span class="keyword">return</span> ngx.exit(<span class="number">500</span>)</span><br><span class="line">        end</span><br><span class="line"></span><br><span class="line">        local key = ngx.var.binary_remote_addr</span><br><span class="line">        local delay, err = lim:incoming(key, <span class="literal">true</span>)</span><br><span class="line">        -- 如果请求数在限制范围内，则当前请求被处理的延迟（这种场景下始终为<span class="number">0</span>，因为要么被处理要么被拒绝）和将被处理的请求的剩余数</span><br><span class="line">        <span class="keyword">if</span> not delay then</span><br><span class="line">            <span class="keyword">if</span> err == <span class="string">&quot;rejected&quot;</span> then</span><br><span class="line">                <span class="keyword">return</span> ngx.exit(<span class="number">503</span>)</span><br><span class="line">            end</span><br><span class="line"></span><br><span class="line">            ngx.log(ngx.ERR, <span class="string">&quot;failed to limit count: &quot;</span>, err)</span><br><span class="line">            <span class="keyword">return</span> ngx.exit(<span class="number">500</span>)</span><br><span class="line">        end</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    proxy_pass http:<span class="comment">//10.100.157.198:6112;</span></span><br><span class="line">    proxy_set_header Host $host;</span><br><span class="line">    proxy_redirect off;</span><br><span class="line">    proxy_set_header X-Real-IP $remote_addr;</span><br><span class="line">    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">    proxy_connect_timeout <span class="number">60</span>;</span><br><span class="line">    proxy_read_timeout <span class="number">600</span>;</span><br><span class="line">    proxy_send_timeout <span class="number">600</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h6 id="平滑限制接口请求数"><a class="markdownIt-Anchor" href="#平滑限制接口请求数"></a> 平滑限制接口请求数</h6>
+<p>场景：</p>
+<p>限制 ip 每分钟只能调用 120 次 /hello 接口（平滑处理请求，即每秒放过2个请求）</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">lua_shared_dict my_limit_req_store <span class="number">100</span>m;</span><br><span class="line">....</span><br><span class="line"></span><br><span class="line">location /hello &#123;</span><br><span class="line">    access_by_lua_block &#123;</span><br><span class="line">        local limit_req = <span class="built_in">require</span> <span class="string">&quot;resty.limit.req&quot;</span></span><br><span class="line">        -- 这里设置rate=<span class="number">2</span>/s，漏桶桶容量设置为<span class="number">0</span>，（也就是来多少水就留多少水） </span><br><span class="line">        -- 因为resty.limit.req代码中控制粒度为毫秒级别，所以可以做到毫秒级别的平滑处理</span><br><span class="line">        local lim, err = limit_req.new(<span class="string">&quot;my_limit_req_store&quot;</span>, <span class="number">2</span>, <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">if</span> not lim then</span><br><span class="line">            ngx.log(ngx.ERR, <span class="string">&quot;failed to instantiate a resty.limit.req object: &quot;</span>, err)</span><br><span class="line">            <span class="keyword">return</span> ngx.exit(<span class="number">500</span>)</span><br><span class="line">        end</span><br><span class="line"></span><br><span class="line">        local key = ngx.var.binary_remote_addr</span><br><span class="line">        local delay, err = lim:incoming(key, <span class="literal">true</span>)</span><br><span class="line">        <span class="keyword">if</span> not delay then</span><br><span class="line">            <span class="keyword">if</span> err == <span class="string">&quot;rejected&quot;</span> then</span><br><span class="line">                <span class="keyword">return</span> ngx.exit(<span class="number">503</span>)</span><br><span class="line">            end</span><br><span class="line">            ngx.log(ngx.ERR, <span class="string">&quot;failed to limit req: &quot;</span>, err)</span><br><span class="line">            <span class="keyword">return</span> ngx.exit(<span class="number">500</span>)</span><br><span class="line">        end</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    proxy_pass http:<span class="comment">//10.100.157.198:6112;</span></span><br><span class="line">    proxy_set_header Host $host;</span><br><span class="line">    proxy_redirect off;</span><br><span class="line">    proxy_set_header X-Real-IP $remote_addr;</span><br><span class="line">    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">    proxy_connect_timeout <span class="number">60</span>;</span><br><span class="line">    proxy_read_timeout <span class="number">600</span>;</span><br><span class="line">    proxy_send_timeout <span class="number">600</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h6 id="漏桶算法限流"><a class="markdownIt-Anchor" href="#漏桶算法限流"></a> 漏桶算法限流</h6>
+<p>场景：</p>
+<p>限制 ip 每分钟只能调用 120 次 /hello 接口（平滑处理请求，即每秒放过2个请求），超过部分进入桶中等待，（桶容量为60），如果桶也满了，则进行限流</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">lua_shared_dict my_limit_req_store <span class="number">100</span>m;</span><br><span class="line">....</span><br><span class="line"></span><br><span class="line">location /hello &#123;</span><br><span class="line">    access_by_lua_block &#123;</span><br><span class="line">        local limit_req = <span class="built_in">require</span> <span class="string">&quot;resty.limit.req&quot;</span></span><br><span class="line">        -- 这里设置rate=<span class="number">2</span>/s，漏桶桶容量设置为<span class="number">0</span>，（也就是来多少水就留多少水） </span><br><span class="line">        -- 因为resty.limit.req代码中控制粒度为毫秒级别，所以可以做到毫秒级别的平滑处理</span><br><span class="line">        local lim, err = limit_req.new(<span class="string">&quot;my_limit_req_store&quot;</span>, <span class="number">2</span>, <span class="number">60</span>)</span><br><span class="line">        <span class="keyword">if</span> not lim then</span><br><span class="line">            ngx.log(ngx.ERR, <span class="string">&quot;failed to instantiate a resty.limit.req object: &quot;</span>, err)</span><br><span class="line">            <span class="keyword">return</span> ngx.exit(<span class="number">500</span>)</span><br><span class="line">        end</span><br><span class="line"></span><br><span class="line">        local key = ngx.var.binary_remote_addr</span><br><span class="line">        local delay, err = lim:incoming(key, <span class="literal">true</span>)</span><br><span class="line">        <span class="keyword">if</span> not delay then</span><br><span class="line">            <span class="keyword">if</span> err == <span class="string">&quot;rejected&quot;</span> then</span><br><span class="line">                <span class="keyword">return</span> ngx.exit(<span class="number">503</span>)</span><br><span class="line">            end</span><br><span class="line">            ngx.log(ngx.ERR, <span class="string">&quot;failed to limit req: &quot;</span>, err)</span><br><span class="line">            <span class="keyword">return</span> ngx.exit(<span class="number">500</span>)</span><br><span class="line">        end</span><br><span class="line">        </span><br><span class="line">        -- 此方法返回，当前请求需要delay秒后才会被处理，和他前面对请求数</span><br><span class="line">        -- 所以此处对桶中请求进行延时处理，让其排队等待，就是应用了漏桶算法</span><br><span class="line">        -- 此处也是与令牌桶的主要区别既</span><br><span class="line">        <span class="keyword">if</span> delay &gt;= <span class="number">0.001</span> then</span><br><span class="line">            ngx.sleep(delay)</span><br><span class="line">        end</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    proxy_pass http:<span class="comment">//10.100.157.198:6112;</span></span><br><span class="line">    proxy_set_header Host $host;</span><br><span class="line">    proxy_redirect off;</span><br><span class="line">    proxy_set_header X-Real-IP $remote_addr;</span><br><span class="line">    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">    proxy_connect_timeout <span class="number">60</span>;</span><br><span class="line">    proxy_read_timeout <span class="number">600</span>;</span><br><span class="line">    proxy_send_timeout <span class="number">600</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h6 id="令牌桶算法限流"><a class="markdownIt-Anchor" href="#令牌桶算法限流"></a> 令牌桶算法限流</h6>
+<p>令牌桶其实可以看着是漏桶的逆操作，看我们对把超过请求速率而进入桶中的请求如何处理，如果是我们把这部分请求放入到等待队列中去，那么其实就是用了漏桶算法，但是如果我们允许直接处理这部分的突发请求，其实就是使用了令牌桶算法。</p>
+<p>场景：</p>
+<p>限制 ip 每分钟只能调用 120 次 /hello 接口（平滑处理请求，即每秒放过2个请求），但是允许一定的突发流量（突发的流量，就是桶的容量（桶容量为60），超过桶容量直接拒绝</p>
+<p>这边只要将上面漏桶算法关于桶中请求的延时处理的代码修改成直接送到后端服务就可以了，这样便是使用了令牌桶</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">lua_shared_dict my_limit_req_store <span class="number">100</span>m;</span><br><span class="line">....</span><br><span class="line"></span><br><span class="line">location /hello &#123;</span><br><span class="line">    access_by_lua_block &#123;</span><br><span class="line">        local limit_req = <span class="built_in">require</span> <span class="string">&quot;resty.limit.req&quot;</span></span><br><span class="line"></span><br><span class="line">        local lim, err = limit_req.new(<span class="string">&quot;my_limit_req_store&quot;</span>, <span class="number">2</span>, <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">if</span> not lim then</span><br><span class="line">            ngx.log(ngx.ERR, <span class="string">&quot;failed to instantiate a resty.limit.req object: &quot;</span>, err)</span><br><span class="line">            <span class="keyword">return</span> ngx.exit(<span class="number">500</span>)</span><br><span class="line">        end</span><br><span class="line"></span><br><span class="line">        local key = ngx.var.binary_remote_addr</span><br><span class="line">        local delay, err = lim:incoming(key, <span class="literal">true</span>)</span><br><span class="line">        <span class="keyword">if</span> not delay then</span><br><span class="line">            <span class="keyword">if</span> err == <span class="string">&quot;rejected&quot;</span> then</span><br><span class="line">                <span class="keyword">return</span> ngx.exit(<span class="number">503</span>)</span><br><span class="line">            end</span><br><span class="line">            ngx.log(ngx.ERR, <span class="string">&quot;failed to limit req: &quot;</span>, err)</span><br><span class="line">            <span class="keyword">return</span> ngx.exit(<span class="number">500</span>)</span><br><span class="line">        end</span><br><span class="line">        </span><br><span class="line">        -- 此方法返回，当前请求需要delay秒后才会被处理，和他前面对请求数</span><br><span class="line">        -- 此处忽略桶中请求所需要的延时处理，让其直接返送到后端服务器，</span><br><span class="line">        -- 其实这就是允许桶中请求作为突发流量 也就是令牌桶桶的原理所在</span><br><span class="line">        <span class="keyword">if</span> delay &gt;= <span class="number">0.001</span> then</span><br><span class="line">        --    ngx.sleep(delay)</span><br><span class="line">        end</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    proxy_pass http:<span class="comment">//10.100.157.198:6112;</span></span><br><span class="line">    proxy_set_header Host $host;</span><br><span class="line">    proxy_redirect off;</span><br><span class="line">    proxy_set_header X-Real-IP $remote_addr;</span><br><span class="line">    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">    proxy_connect_timeout <span class="number">60</span>;</span><br><span class="line">    proxy_read_timeout <span class="number">600</span>;</span><br><span class="line">    proxy_send_timeout <span class="number">600</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>说明：</p>
+<p>其实nginx的ngx_http_limit_req_module 这个模块中的delay和nodelay也就是类似此处对桶中请求是否做延迟处理的两种方案，也就是分别对应的漏桶和令牌桶两种算法</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://waltonmax.github.io/2020/08/14/nginx-lua-resty-limit-traffic/" title="nginx-Lua限流模块lua-resty-limit-traffic使用" target="_blank" rel="external">https://waltonmax.github.io/2020/08/14/nginx-lua-resty-limit-traffic/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/waltonmax" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/waltonmax" target="_blank"><span class="text-dark">Walton</span><small class="ml-1x">software engineer</small></a></h3>
+        <div>个人简介。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2020/08/12/database-mongodb-backup/" title="mongodb备份与恢复"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+        <span>[&nbsp;</span><span>文章目录</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/waltonmax" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+
+
+
+
+
+</body>
+</html>

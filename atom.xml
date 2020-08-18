@@ -6,7 +6,7 @@
   <link href="https://waltonmax.github.io/atom.xml" rel="self"/>
   
   <link href="https://waltonmax.github.io/"/>
-  <updated>2020-08-13T09:46:06.480Z</updated>
+  <updated>2020-08-14T13:16:41.368Z</updated>
   <id>https://waltonmax.github.io/</id>
   
   <author>
@@ -15,6 +15,30 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>nginx-Lua限流模块lua-resty-limit-traffic使用</title>
+    <link href="https://waltonmax.github.io/2020/08/14/nginx-lua-resty-limit-traffic/"/>
+    <id>https://waltonmax.github.io/2020/08/14/nginx-lua-resty-limit-traffic/</id>
+    <published>2020-08-14T13:14:24.000Z</published>
+    <updated>2020-08-14T13:16:41.368Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;h6 id=&quot;限制接口总并发数&quot;&gt;&lt;a class=&quot;markdownIt-Anchor&quot; href=&quot;#限制接口总并发数&quot;&gt;&lt;/a&gt; 限制接口总并发数&lt;/h6&gt;
+&lt;p&gt;按照 ip 限制其并发连接数&lt;/p&gt;
+&lt;figure class=&quot;highlight js&quot;&gt;&lt;table</summary>
+      
+    
+    
+    
+    <category term="nginx" scheme="https://waltonmax.github.io/categories/nginx/"/>
+    
+    
+    <category term="nginx" scheme="https://waltonmax.github.io/tags/nginx/"/>
+    
+  </entry>
   
   <entry>
     <title>mongodb备份与恢复</title>
@@ -205,6 +229,34 @@
   </entry>
   
   <entry>
+    <title>nginx-Lua对后台白名单限制访问</title>
+    <link href="https://waltonmax.github.io/2020/08/11/nginx-lua-admin-whitelist/"/>
+    <id>https://waltonmax.github.io/2020/08/11/nginx-lua-admin-whitelist/</id>
+    <published>2020-08-11T13:14:24.000Z</published>
+    <updated>2020-08-18T09:50:27.479Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;ol&gt;
+&lt;li&gt;
+&lt;h4 id=&quot;使用lua实现白名单lua-resty-iputils模块&quot;&gt;&lt;a class=&quot;markdownIt-Anchor&quot; href=&quot;#使用lua实现白名单lua-resty-iputils模块&quot;&gt;&lt;/a&gt; 使用lua实现白名单(lua-rest</summary>
+      
+    
+    
+    
+    <category term="nginx" scheme="https://waltonmax.github.io/categories/nginx/"/>
+    
+    
+    <category term="nginx" scheme="https://waltonmax.github.io/tags/nginx/"/>
+    
+    <category term="openresty" scheme="https://waltonmax.github.io/tags/openresty/"/>
+    
+    <category term="lua" scheme="https://waltonmax.github.io/tags/lua/"/>
+    
+  </entry>
+  
+  <entry>
     <title>Hello World</title>
     <link href="https://waltonmax.github.io/2020/08/11/hello-world/"/>
     <id>https://waltonmax.github.io/2020/08/11/hello-world/</id>
@@ -224,6 +276,57 @@
     
     
     <category term="test-tag" scheme="https://waltonmax.github.io/tags/test-tag/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>liux iptables的使用</title>
+    <link href="https://waltonmax.github.io/2020/08/01/liux-iptables/"/>
+    <id>https://waltonmax.github.io/2020/08/01/liux-iptables/</id>
+    <published>2020-08-01T12:31:41.000Z</published>
+    <updated>2020-08-18T10:33:52.383Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;文件位置: &lt;code&gt;/etc/sysconfig/iptables&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;命令&lt;/strong&gt;&lt;/p&gt;
+&lt;figure class=&quot;highlight shell&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;</summary>
+      
+    
+    
+    
+    <category term="liux" scheme="https://waltonmax.github.io/categories/liux/"/>
+    
+    
+    <category term="liux" scheme="https://waltonmax.github.io/tags/liux/"/>
+    
+    <category term="iptables" scheme="https://waltonmax.github.io/tags/iptables/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>配置SSH免密登录</title>
+    <link href="https://waltonmax.github.io/2020/08/01/liux-ssh-key/"/>
+    <id>https://waltonmax.github.io/2020/08/01/liux-ssh-key/</id>
+    <published>2020-08-01T12:31:41.000Z</published>
+    <updated>2020-08-18T10:51:21.254Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;&lt;code&gt;id_rsa.pub&lt;/code&gt;为公钥，&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;id_rsa&lt;/code&gt;为私钥&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;命令&lt;/strong&gt;&lt;/p&gt;
+&lt;figure class=&quot;highlight shell&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td c</summary>
+      
+    
+    
+    
+    <category term="liux" scheme="https://waltonmax.github.io/categories/liux/"/>
+    
+    
+    <category term="liux" scheme="https://waltonmax.github.io/tags/liux/"/>
     
   </entry>
   

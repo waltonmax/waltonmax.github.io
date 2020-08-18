@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>nginx-Lua对后台白名单限制访问 | walton blog</title>
+  <meta name="description" content="使用lua实现白名单(lua-resty-iputils模块)  依赖模块lrucache.lua,iputils.lua (注意:lua-resty-iputils不支持ipv6.lua-resty-iputils的作者推荐lua-libcidr-ffi,以支持ipv6.lua-libcidr-ffi需要libcidr) 模块存放位置 &#x2F;usr&#x2F;local&#x2F;nginx&#x2F;conf&#x2F;lua&#x2F;l">
+<meta property="og:type" content="article">
+<meta property="og:title" content="nginx-Lua对后台白名单限制访问">
+<meta property="og:url" content="https://waltonmax.github.io/2020/08/11/nginx-lua-admin-whitelist/index.html">
+<meta property="og:site_name" content="Walton">
+<meta property="og:description" content="使用lua实现白名单(lua-resty-iputils模块)  依赖模块lrucache.lua,iputils.lua (注意:lua-resty-iputils不支持ipv6.lua-resty-iputils的作者推荐lua-libcidr-ffi,以支持ipv6.lua-libcidr-ffi需要libcidr) 模块存放位置 &#x2F;usr&#x2F;local&#x2F;nginx&#x2F;conf&#x2F;lua&#x2F;l">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-08-11T13:14:24.000Z">
+<meta property="article:modified_time" content="2020-08-18T09:50:27.479Z">
+<meta property="article:author" content="Walton">
+<meta property="article:tag" content="nginx">
+<meta property="article:tag" content="openresty">
+<meta property="article:tag" content="lua">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://waltonmax.github.io/2020/08/11/nginx-lua-admin-whitelist/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Walton" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.0.2"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/waltonmax" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Walton</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">software engineer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> BeiJing, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/waltonmax" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/liux/">liux</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/nginx/">nginx</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/test/">test</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%89%8D%E7%AB%AF/">前端</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/">开发工具使用</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83/">开发规范</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><span class="category-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/bash/" style="font-size: 13px;">bash</a> <a href="/tags/git/" style="font-size: 13.5px;">git</a> <a href="/tags/hexo/" style="font-size: 13px;">hexo</a> <a href="/tags/iptables/" style="font-size: 13px;">iptables</a> <a href="/tags/liux/" style="font-size: 14px;">liux</a> <a href="/tags/lua/" style="font-size: 13px;">lua</a> <a href="/tags/mongodb/" style="font-size: 13px;">mongodb</a> <a href="/tags/mysql/" style="font-size: 13.5px;">mysql</a> <a href="/tags/nginx/" style="font-size: 13.5px;">nginx</a> <a href="/tags/openresty/" style="font-size: 13px;">openresty</a> <a href="/tags/test-tag/" style="font-size: 13px;">test-tag</a> <a href="/tags/%E7%89%88%E6%9C%AC/" style="font-size: 13px;">版本</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/nginx/">nginx</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/08/14/nginx-lua-resty-limit-traffic/" class="title">nginx-Lua限流模块lua-resty-limit-traffic使用</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-08-14T13:14:24.000Z" itemprop="datePublished">2020-08-14</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/08/12/database-mongodb-backup/" class="title">mongodb备份与恢复</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-08-12T12:31:41.000Z" itemprop="datePublished">2020-08-12</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/08/12/database-mysql-backup/" class="title">mysql备份与恢复</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-08-12T12:31:41.000Z" itemprop="datePublished">2020-08-12</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/08/12/database-mysql-reset-password/" class="title">mysql重置密码</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-08-12T12:31:41.000Z" itemprop="datePublished">2020-08-12</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83/">开发规范</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/08/12/git-flow-guide/" class="title">Git 工作流与规范</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-08-12T12:31:41.000Z" itemprop="datePublished">2020-08-12</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8lua%E5%AE%9E%E7%8E%B0%E7%99%BD%E5%90%8D%E5%8D%95lua-resty-iputils%E6%A8%A1%E5%9D%97"><span class="toc-number">1.</span> <span class="toc-text"> 使用lua实现白名单(lua-resty-iputils模块)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8lua%E5%AE%9E%E7%8E%B0%E7%99%BD%E5%90%8D%E5%8D%95lua-libcidr-ffi%E6%A8%A1%E5%9D%97-%E6%94%AF%E6%8C%81ipv6"><span class="toc-number">2.</span> <span class="toc-text"> 使用lua实现白名单(lua-libcidr-ffi模块 支持ipv6)</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9libcidr-ffilua"><span class="toc-number"></span> <span class="toc-text"> 修改libcidr-ffi.lua</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8lua-libcidr-ffi"><span class="toc-number"></span> <span class="toc-text"> 使用lua-libcidr-ffi</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8nginx%E7%9A%84allowdeny%E6%8C%87%E4%BB%A4%E5%AE%9E%E7%8E%B0%E7%99%BD%E5%90%8D%E5%8D%95"><span class="toc-number">1.</span> <span class="toc-text"> 使用nginx的allow&#x2F;deny指令实现白名单</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#allowdeny%E6%8C%87%E4%BB%A4%E7%9A%84%E8%AF%AD%E6%B3%95"><span class="toc-number">1.1.</span> <span class="toc-text"> allow&#x2F;deny指令的语法:</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-nginx-lua-admin-whitelist" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      nginx-Lua对后台白名单限制访问
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/08/11/nginx-lua-admin-whitelist/" class="article-date">
+	  <time datetime="2020-08-11T13:14:24.000Z" itemprop="datePublished">2020-08-11</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/nginx/">nginx</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/lua/" rel="tag">lua</a>, <a class="article-tag-link-link" href="/tags/nginx/" rel="tag">nginx</a>, <a class="article-tag-link-link" href="/tags/openresty/" rel="tag">openresty</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/08/11/nginx-lua-admin-whitelist/#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <ol>
+<li>
+<h4 id="使用lua实现白名单lua-resty-iputils模块"><a class="markdownIt-Anchor" href="#使用lua实现白名单lua-resty-iputils模块"></a> 使用lua实现白名单(lua-resty-iputils模块)</h4>
+<ul>
+<li>依赖模块lrucache.lua,iputils.lua (注意:<a target="_blank" rel="noopener" href="https://github.com/hamishforbes/lua-resty-iputils">lua-resty-iputils</a>不支持<code>ipv6</code>.<a target="_blank" rel="noopener" href="https://github.com/hamishforbes/lua-resty-iputils">lua-resty-iputils</a>的作者推荐<a target="_blank" rel="noopener" href="https://github.com/GUI/lua-libcidr-ffi">lua-libcidr-ffi</a>,以支持<code>ipv6</code>.<code>lua-libcidr-ffi</code>需要<code>libcidr</code>)</li>
+<li>模块存放位置 /usr/local/nginx/conf/lua/lib/resty/,必须包含resty文件夹</li>
+<li>新建whitelist_init.lua,whitelist_access.lua,存放至/usr/local/nginx/conf/lua/</li>
+<li>http  导入模块</li>
+<li>server 块导入模块</li>
+</ul>
+</li>
+</ol>
+<p>whitelist_init.lua 内容:</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">local</span> iputils = <span class="built_in">require</span>(<span class="string">&quot;resty.iputils&quot;</span>)</span><br><span class="line">iputils.enable_lrucache()</span><br><span class="line"><span class="keyword">local</span> whitelist_ips = &#123;</span><br><span class="line">	<span class="string">&quot;127.0.0.1&quot;</span>,</span><br><span class="line">	<span class="string">&quot;172.19.0.0/16&quot;</span>,</span><br><span class="line">	<span class="string">&quot;8.8.8.8/24&quot;</span> <span class="comment">--vpn IP</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">whitelist = iputils.parse_cidrs(whitelist_ips)</span><br></pre></td></tr></table></figure>
+<p>whitelist_access.lua 内容:</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">local</span> iputils = <span class="built_in">require</span>(<span class="string">&quot;resty.iputils&quot;</span>)</span><br><span class="line"><span class="keyword">local</span> headers = ngx.req.get_headers()</span><br><span class="line"><span class="keyword">local</span> ip = headers[<span class="string">&quot;X-REAL-IP&quot;</span>] <span class="keyword">or</span> headers[<span class="string">&quot;X_FORWARDED_FOR&quot;</span>] <span class="keyword">or</span> ngx.var.remote_addr <span class="keyword">or</span> <span class="string">&quot;0.0.0.0&quot;</span></span><br><span class="line"><span class="comment">--ngx.say(&quot;IP: &quot;, ip)</span></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> iputils.ip_in_cidrs(ip, whitelist) <span class="keyword">then</span></span><br><span class="line">  <span class="keyword">return</span> ngx.<span class="built_in">exit</span>(ngx.HTTP_FORBIDDEN)</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>http 内容:</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">http</span> &#123;</span><br><span class="line">		.................</span><br><span class="line">     <span class="comment">#lua模块导入</span></span><br><span class="line">     <span class="attribute">lua_package_path</span> <span class="string">&quot;/usr/local/nginx/conf/lua/lib/?.lua;;&quot;</span>;</span><br><span class="line">     <span class="comment">#访问白名单初始化</span></span><br><span class="line">     <span class="attribute">init_by_lua_file</span> /usr/local/nginx/conf/lua/whitelist_init.lua;</span><br><span class="line">     .................</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>server 内容:</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">  <span class="section">server</span> &#123;</span><br><span class="line">         ..............</span><br><span class="line">         <span class="attribute">location</span> / &#123;</span><br><span class="line">           <span class="attribute">access_by_lua_file</span> /usr/local/nginx/conf/lua/whitelist_access.lua;</span><br><span class="line">         ..............</span><br><span class="line">         &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>
+<h4 id="使用lua实现白名单lua-libcidr-ffi模块-支持ipv6"><a class="markdownIt-Anchor" href="#使用lua实现白名单lua-libcidr-ffi模块-支持ipv6"></a> 使用lua实现白名单(lua-libcidr-ffi模块 支持ipv6)</h4>
+<p><code>libcidr</code>编译</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">   &amp;&amp; curl -fSL http://www.over-yonder.net/~fullermd/projects/libcidr/libcidr-1.2.3.tar.xz -o /tmp/libcidr-1.2.3.tar.xz \</span><br><span class="line">   &amp;&amp; xz -d /tmp/libcidr-1.2.3.tar.xz &amp;&amp; tar -xvf /tmp/libcidr-1.2.3.tar \</span><br><span class="line">   &amp;&amp; cd libcidr-1.2.3/src &amp;&amp; make &amp;&amp; mv libcidr.so.0 /usr/local/openresty/lualib/libcidr.so \</span><br><span class="line">   ...</span><br></pre></td></tr></table></figure>
+<ul>
+<li>
+<p><code>alpine</code>需要安装<code>xz</code>,<code>coreutils</code>.其中<code>xz</code>用来解压,<code>libcidr</code>编译的时候会用到<code>coreutils</code>里面的<code>tsort</code></p>
+</li>
+<li>
+<p><code>make</code>后不用<code>make DESTDIR=/your_path install</code>.执行<code>make DESTDIR=/your_path install</code>的话会报错.其实<code>make</code>执行后，就已经生成so文件了,只不过叫<code>libcidr.so.0</code>.把这个文件移动到<code>openresty</code>可以解析的目录就可以了</p>
+<h2 id="修改libcidr-ffilua"><a class="markdownIt-Anchor" href="#修改libcidr-ffilua"></a> 修改libcidr-ffi.lua</h2>
+<p>只是编译了<code>libcidr</code>的话，运行会报无法找到模块.所以还需要修改<code>libcidr-ffi.lua</code>文件,找到里面的</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">local</span> cidr = ffi.<span class="built_in">load</span>(<span class="string">&quot;cidr&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>改为</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">local</span> cidr = ffi.<span class="built_in">load</span>(<span class="string">&quot;/usr/local/openresty/lualib/libcidr.so&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>路径就是上面编译后移动到的路径<br />
+构建镜像的时候，记得把修改后的<code>libcidr-ffi.lua</code>加到镜像里</p>
+<h2 id="使用lua-libcidr-ffi"><a class="markdownIt-Anchor" href="#使用lua-libcidr-ffi"></a> 使用lua-libcidr-ffi</h2>
+<p>whitelist_init.lua</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">whitelist_ips = &#123;</span><br><span class="line">    <span class="string">&quot;103.21.244.0/22&quot;</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>whitelist_access.lua</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">local</span> cidr = <span class="built_in">require</span>(<span class="string">&quot;resty.libcidr-ffi&quot;</span>)</span><br><span class="line"><span class="keyword">local</span> flag=<span class="literal">false</span></span><br><span class="line"><span class="keyword">for</span> i, v <span class="keyword">in</span> <span class="built_in">ipairs</span>(whitelist_ips) <span class="keyword">do</span></span><br><span class="line">  <span class="comment">--proxy_protocol_addr在白名单里</span></span><br><span class="line">  <span class="keyword">if</span> cidr.contains(cidr.from_str(v), cidr.from_str(ngx.var.proxy_protocol_addr)) <span class="keyword">then</span></span><br><span class="line">    ngx.<span class="built_in">log</span>(ngx.ERR,ngx.var.proxy_protocol_addr,<span class="string">&#x27; match &#x27;</span>,v)</span><br><span class="line">    flag=<span class="literal">true</span></span><br><span class="line">    <span class="keyword">break</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> flag <span class="keyword">then</span></span><br><span class="line">  <span class="keyword">return</span> ngx.<span class="built_in">exit</span>(ngx.HTTP_FORBIDDEN)</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>nginx.conf</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">http&#123;</span><br><span class="line">    <span class="attribute">init_by_lua_file</span> whitelist_init.lua;</span><br><span class="line"> </span><br><span class="line">    server&#123;</span><br><span class="line">        <span class="attribute">listen</span> <span class="number">4430</span>;</span><br><span class="line">        <span class="attribute">location</span> / &#123;</span><br><span class="line">            <span class="attribute">access_by_lua_file</span> whitelist_access.lua;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li>
+<h4 id="使用nginx的allowdeny指令实现白名单"><a class="markdownIt-Anchor" href="#使用nginx的allowdeny指令实现白名单"></a> 使用nginx的allow/deny指令实现白名单</h4>
+<p>使用nginx的<a target="_blank" rel="noopener" href="https://nginx.org/en/docs/stream/ngx_stream_access_module.html">allow/deny指令</a>也可以实现，不过要注意的是，allow/deny指令默认对<code>remote_addr</code>过滤，如果nginx前面有反向代理，<code>remote_addr</code>将会是127.0.0.1,使指令不起作用.所以需要使用<code>ngx_http_realip_module</code>,修改allow/deny指令的过滤对象<br />
+<code>ngx_http_realip_module</code>需要编译的时候添加</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">--with-http_realip_module</span><br></pre></td></tr></table></figure>
+<h5 id="allowdeny指令的语法"><a class="markdownIt-Anchor" href="#allowdeny指令的语法"></a> allow/deny指令的语法:</h5>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">allow/deny address | CIDR | unix: | all</span><br></pre></td></tr></table></figure>
+<p>允许/拒绝某个ip或者一个ip段访问.</p>
+<p>如果指定unix:,那将允许socket的访问。<br />
+注意：unix:是在1.5.1中新加入的功能。</p>
+<p>allowed-ip.conf</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">allow</span> <span class="number">1.1.1.0</span>/<span class="number">22</span>;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>nginx.conf</p>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">  ......</span><br><span class="line">  location &#x2F; &#123;</span><br><span class="line">    real_ip_header proxy_protocol; #X-Forwarded-For</span><br><span class="line">	set_real_ip_from 127.0.0.1;</span><br><span class="line">  ......</span><br><span class="line">	include &#x2F;root&#x2F;allowed-ip.conf;</span><br><span class="line">	deny all;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>set_real_ip_from必须要设置，否则real_ip_header不起作用</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">deny</span> <span class="number">192.168.1.1</span>    <span class="comment">#屏蔽单个IP的命令是</span></span><br><span class="line">deny <span class="number">123.0.0.0</span>/<span class="number">8</span>    <span class="comment">#封整个段即从123.0.0.1到123.255.255.254的命令</span></span><br><span class="line">deny <span class="number">124.45.0.0</span>/<span class="number">16</span>  <span class="comment">#封IP段即从123.45.0.1到123.45.255.254的命令</span></span><br><span class="line">deny <span class="number">123.45.6.0</span>/<span class="number">24</span>  <span class="comment">#封IP段即从123.45.6.1到123.45.6.254的命令是</span></span><br></pre></td></tr></table></figure>
+<p>斜杠后的数值(子网掩码)：<br />
+8：  匹配后三位最大值的<br />
+16：匹配后两位最大值的<br />
+24：匹配后一位最大值的</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://waltonmax.github.io/2020/08/11/nginx-lua-admin-whitelist/" title="nginx-Lua对后台白名单限制访问" target="_blank" rel="external">https://waltonmax.github.io/2020/08/11/nginx-lua-admin-whitelist/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/waltonmax" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/waltonmax" target="_blank"><span class="text-dark">Walton</span><small class="ml-1x">software engineer</small></a></h3>
+        <div>个人简介。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/08/12/hexo-deployment/" title="hexo 部署"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/08/11/hello-world/" title="Hello World"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+        <span>[&nbsp;</span><span>文章目录</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/waltonmax" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+
+
+
+
+
+</body>
+</html>
